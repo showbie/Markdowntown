@@ -2,20 +2,22 @@ import Foundation
 import Markdown
 import UIKit
 
-struct Markdowntown: MarkupVisitor {
+public struct Markdowntown: MarkupVisitor {
     private var stylesheet: MarkdowntownStylesheet = .default
     
-    mutating func attributedString(from markdown: String, stylesheet: MarkdowntownStylesheet = .default) -> NSAttributedString {
+    public init() {}
+    
+    public mutating func attributedString(from markdown: String, stylesheet: MarkdowntownStylesheet = .default) -> NSAttributedString {
         attributedString(from: Document(parsing: markdown), stylesheet: stylesheet)
     }
     
-    mutating func attributedString(from document: Document, stylesheet: MarkdowntownStylesheet = .default) -> NSAttributedString {
+    public mutating func attributedString(from document: Document, stylesheet: MarkdowntownStylesheet = .default) -> NSAttributedString {
         self.stylesheet = stylesheet
         
         return visit(document)
     }
     
-    mutating func defaultVisit(_ markup: Markup) -> NSAttributedString {
+    public mutating func defaultVisit(_ markup: Markup) -> NSAttributedString {
         let result = NSMutableAttributedString()
         
         for child in markup.children {
@@ -29,7 +31,7 @@ struct Markdowntown: MarkupVisitor {
 //
 //    }
     
-    mutating func visitCodeBlock(_ codeBlock: CodeBlock) -> NSAttributedString {
+    public mutating func visitCodeBlock(_ codeBlock: CodeBlock) -> NSAttributedString {
         let result = NSMutableAttributedString(string: codeBlock.code)
         
         stylesheet.applyStyling(codeBlock: result)
@@ -47,7 +49,7 @@ struct Markdowntown: MarkupVisitor {
     //        return hr
     //    }
         
-    mutating func visitHeading(_ heading: Heading) -> NSAttributedString {
+    public mutating func visitHeading(_ heading: Heading) -> NSAttributedString {
         let result = NSMutableAttributedString()
         
         for child in heading.children {
@@ -63,7 +65,7 @@ struct Markdowntown: MarkupVisitor {
         return result
     }
 
-    mutating func visitHTMLBlock(_ html: HTMLBlock) -> NSAttributedString {
+    public mutating func visitHTMLBlock(_ html: HTMLBlock) -> NSAttributedString {
         let result = NSMutableAttributedString()
         
         let data = Data(html.rawHTML.utf8)
@@ -76,7 +78,7 @@ struct Markdowntown: MarkupVisitor {
         return result
     }
     
-    mutating func visitListItem(_ listItem: ListItem) -> NSAttributedString {
+    public mutating func visitListItem(_ listItem: ListItem) -> NSAttributedString {
         let result = NSMutableAttributedString()
         
         for child in listItem.children {
@@ -90,7 +92,7 @@ struct Markdowntown: MarkupVisitor {
         return result
     }
     
-    mutating func visitOrderedList(_ orderedList: OrderedList) -> NSAttributedString {
+    public mutating func visitOrderedList(_ orderedList: OrderedList) -> NSAttributedString {
         let result = NSMutableAttributedString()
         
         let depth = orderedList.depth
@@ -111,7 +113,7 @@ struct Markdowntown: MarkupVisitor {
         return result
     }
 
-    mutating func visitUnorderedList(_ unorderedList: UnorderedList) -> NSAttributedString {
+    public mutating func visitUnorderedList(_ unorderedList: UnorderedList) -> NSAttributedString {
         let result = NSMutableAttributedString()
         
         let depth = unorderedList.depth
@@ -129,7 +131,7 @@ struct Markdowntown: MarkupVisitor {
         return result
     }
 
-    mutating func visitParagraph(_ paragraph: Paragraph) -> NSAttributedString {
+    public mutating func visitParagraph(_ paragraph: Paragraph) -> NSAttributedString {
         let result = NSMutableAttributedString()
 
         for child in paragraph.children {
@@ -150,7 +152,7 @@ struct Markdowntown: MarkupVisitor {
         return result
     }
   
-    mutating func visitInlineCode(_ inlineCode: InlineCode) -> NSAttributedString {
+    public mutating func visitInlineCode(_ inlineCode: InlineCode) -> NSAttributedString {
         let result = NSMutableAttributedString(string: inlineCode.code)
         
         stylesheet.applyStyling(inlineCode: result)
@@ -158,7 +160,7 @@ struct Markdowntown: MarkupVisitor {
         return result
     }
     
-    mutating func visitEmphasis(_ emphasis: Emphasis) -> NSAttributedString {
+    public mutating func visitEmphasis(_ emphasis: Emphasis) -> NSAttributedString {
         let result = NSMutableAttributedString()
         
         for child in emphasis.children {
@@ -191,11 +193,11 @@ struct Markdowntown: MarkupVisitor {
 //        return result
 //    }
     
-    mutating func visitLineBreak(_ lineBreak: LineBreak) -> NSAttributedString {
+    public mutating func visitLineBreak(_ lineBreak: LineBreak) -> NSAttributedString {
         NSAttributedString(string: "\n")
     }
     
-    mutating func visitLink(_ link: Link) -> NSAttributedString {
+    public mutating func visitLink(_ link: Link) -> NSAttributedString {
         let result = NSMutableAttributedString()
         
         for child in link.children {
@@ -211,11 +213,11 @@ struct Markdowntown: MarkupVisitor {
         return result
     }
 
-    mutating func visitSoftBreak(_ softBreak: SoftBreak) -> NSAttributedString {
+    public mutating func visitSoftBreak(_ softBreak: SoftBreak) -> NSAttributedString {
         NSAttributedString(string: "\n")
     }
 
-    mutating func visitStrong(_ strong: Strong) -> NSAttributedString {
+    public mutating func visitStrong(_ strong: Strong) -> NSAttributedString {
         let result = NSMutableAttributedString()
         
         for child in strong.children {
@@ -232,7 +234,7 @@ struct Markdowntown: MarkupVisitor {
         return result
     }
     
-    mutating func visitText(_ text: Text) -> NSAttributedString {
+    public mutating func visitText(_ text: Text) -> NSAttributedString {
         let string = NSMutableAttributedString(string: text.plainText)
         
         stylesheet.applyStyling(text: string)
@@ -240,7 +242,7 @@ struct Markdowntown: MarkupVisitor {
         return string
     }
         
-    mutating func visitStrikethrough(_ strikethrough: Strikethrough) -> NSAttributedString {
+    public mutating func visitStrikethrough(_ strikethrough: Strikethrough) -> NSAttributedString {
         let result = NSMutableAttributedString()
         
         for child in strikethrough.children {

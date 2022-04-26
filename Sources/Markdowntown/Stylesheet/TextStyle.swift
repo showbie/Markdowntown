@@ -7,25 +7,25 @@
 
 import UIKit
 
-struct TextStyle: MarkdownStyle {
-    let textColor: UIColor
-    let font: UIFont
-    let backgroundColor: UIColor?
+public struct TextStyle: MarkdownStyle {
+    public let textColor: UIColor
+    public let font: UIFont
+    public let backgroundColor: UIColor?
     
-    init(textColor: UIColor = .black, font: UIFont, backgroundColor: UIColor? = nil) {
+    public init(textColor: UIColor = .black, font: UIFont, backgroundColor: UIColor? = nil) {
         self.textColor = textColor
         self.font = font
         self.backgroundColor = backgroundColor
     }
 }
 
-struct InsetTextStyle: MarkdownStyle {
-    let textColor: UIColor
-    let font: UIFont
-    let backgroundColor: UIColor?
-    let insets: UIEdgeInsets
+public struct InsetTextStyle: MarkdownStyle {
+    public let textColor: UIColor
+    public let font: UIFont
+    public let backgroundColor: UIColor?
+    public let insets: UIEdgeInsets
         
-    init(textColor: UIColor = .black, font: UIFont = .systemFont(ofSize: 17), backgroundColor: UIColor? = nil, insets: UIEdgeInsets = .zero) {
+    public init(textColor: UIColor = .black, font: UIFont = .systemFont(ofSize: 17), backgroundColor: UIColor? = nil, insets: UIEdgeInsets = .zero) {
         self.textColor = textColor
         self.font = font
         self.backgroundColor = backgroundColor

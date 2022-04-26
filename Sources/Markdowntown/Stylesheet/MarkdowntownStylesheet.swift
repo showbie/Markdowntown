@@ -1,42 +1,42 @@
 //
 //  MarkdowntownStylesheet.swift
-//  
+//
 //
 //  Created by Colin Humber on 2022-04-25.
 //
 
 import UIKit
 
-struct MarkdowntownStylesheet {
-    let paragraphStyle: NSParagraphStyle
-    let textStyle: MarkdownStyle
-    let emphasisStyle: TextStyle
-    let strongStyle: TextStyle
-    let strongEmphasisStyle: TextStyle
-    let strikethroughStyle: TextStyle
-    let codeStyle: InsetTextStyle
-    let heading1Style: TextStyle
-    let heading2Style: TextStyle
-    let heading3Style: TextStyle
-    let heading4Style: TextStyle
-    let heading5Style: TextStyle
-    let heading6Style: TextStyle
-    let linkStyle: TextStyle
+public struct MarkdowntownStylesheet {
+    public let paragraphStyle: NSParagraphStyle
+    public let textStyle: TextStyle
+    public let emphasisStyle: TextStyle
+    public let strongStyle: TextStyle
+    public let strongEmphasisStyle: TextStyle
+    public let strikethroughStyle: TextStyle
+    public let codeStyle: InsetTextStyle
+    public let heading1Style: TextStyle
+    public let heading2Style: TextStyle
+    public let heading3Style: TextStyle
+    public let heading4Style: TextStyle
+    public let heading5Style: TextStyle
+    public let heading6Style: TextStyle
+    public let linkStyle: TextStyle
 
-    init(paragraphStyle: NSParagraphStyle = .markdownDefault,
-         textStyle: TextStyle = .init(font: .systemFont(ofSize: 17)),
-         emphasisStyle: TextStyle = .init(font: .italicSystemFont(ofSize: 17)),
-         strongStyle: TextStyle = .init(font: .boldSystemFont(ofSize: 17)),
-         strongEmphasisStyle: TextStyle = .init(font: .systemFont(ofSize: 17).bold.italic),
-         strikethroughStyle: TextStyle = .init(font: .systemFont(ofSize: 17)),
-         codeStyle: InsetTextStyle = .init(font: .monospacedSystemFont(ofSize: 16, weight: .regular), backgroundColor: .lightGray),
-         heading1Style: TextStyle = .init(font: .boldSystemFont(ofSize: 28)),
-         heading2Style: TextStyle = .init(font: .boldSystemFont(ofSize: 26)),
-         heading3Style: TextStyle = .init(font: .boldSystemFont(ofSize: 24)),
-         heading4Style: TextStyle = .init(font: .boldSystemFont(ofSize: 24)),
-         heading5Style: TextStyle = .init(font: .boldSystemFont(ofSize: 20)),
-         heading6Style: TextStyle = .init(font: .boldSystemFont(ofSize: 20)),
-         linkStyle: TextStyle = .init(textColor: .systemBlue, font: .systemFont(ofSize: 17))
+    public init(paragraphStyle: NSParagraphStyle = .markdownDefault,
+                textStyle: TextStyle = .init(font: .systemFont(ofSize: 17)),
+                emphasisStyle: TextStyle = .init(font: .italicSystemFont(ofSize: 17)),
+                strongStyle: TextStyle = .init(font: .boldSystemFont(ofSize: 17)),
+                strongEmphasisStyle: TextStyle = .init(font: .systemFont(ofSize: 17).bold.italic),
+                strikethroughStyle: TextStyle = .init(font: .systemFont(ofSize: 17)),
+                codeStyle: InsetTextStyle = .init(font: .monospacedSystemFont(ofSize: 16, weight: .regular), backgroundColor: .lightGray),
+                heading1Style: TextStyle = .init(font: .boldSystemFont(ofSize: 28)),
+                heading2Style: TextStyle = .init(font: .boldSystemFont(ofSize: 26)),
+                heading3Style: TextStyle = .init(font: .boldSystemFont(ofSize: 24)),
+                heading4Style: TextStyle = .init(font: .boldSystemFont(ofSize: 24)),
+                heading5Style: TextStyle = .init(font: .boldSystemFont(ofSize: 20)),
+                heading6Style: TextStyle = .init(font: .boldSystemFont(ofSize: 20)),
+                linkStyle: TextStyle = .init(textColor: .systemBlue, font: .systemFont(ofSize: 17))
     ) {
         self.textStyle = textStyle
         self.paragraphStyle = paragraphStyle
@@ -134,7 +134,7 @@ struct MarkdowntownStylesheet {
 }
 
 
-extension MarkdowntownStylesheet {
+public extension MarkdowntownStylesheet {
     static var `default` = MarkdowntownStylesheet()
 //    static var `default` = MarkdownStylesheet(textFont: UIFont(name: "Avenir-Roman", size: 17)!,
 //                                              textColor: .black,
