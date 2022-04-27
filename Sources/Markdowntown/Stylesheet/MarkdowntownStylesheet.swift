@@ -132,14 +132,3 @@ public struct MarkdowntownStylesheet {
         }
     }
 }
-
-
-public extension MarkdowntownStylesheet {
-    static var `default` = MarkdowntownStylesheet()
-//    static var `default` = MarkdownStylesheet(textFont: UIFont(name: "Avenir-Roman", size: 17)!,
-//                                              textColor: .black,
-//                                              emphasisFont: UIFont(name: "Avenir-Oblique", size: 17)!,
-//                                              emphasisColor: .blue,
-//                                              boldFont: UIFont(name: "Avenir-Heavy", size: 17)!,
-//                                              boldColor: .red)
-}
