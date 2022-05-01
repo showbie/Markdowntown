@@ -7,7 +7,7 @@
 
 import UIKit
 
-protocol MarkdownStyle {
+public protocol MarkdownStyle {
     var textColor: UIColor { get }
     var font: UIFont { get }
     var backgroundColor: UIColor? { get }

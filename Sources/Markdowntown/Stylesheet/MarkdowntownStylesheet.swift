@@ -6,22 +6,24 @@
 //
 
 import UIKit
+import Markdown
 
 public struct MarkdowntownStylesheet {
     public let paragraphStyle: NSParagraphStyle
-    public let textStyle: TextStyle
-    public let emphasisStyle: TextStyle
-    public let strongStyle: TextStyle
-    public let strongEmphasisStyle: TextStyle
-    public let strikethroughStyle: TextStyle
+    public let textStyle: MarkdownStyle
+    public let emphasisStyle: MarkdownStyle
+    public let strongStyle: MarkdownStyle
+    public let strongEmphasisStyle: MarkdownStyle
+    public let strikethroughStyle: MarkdownStyle
     public let codeStyle: InsetTextStyle
-    public let heading1Style: TextStyle
-    public let heading2Style: TextStyle
-    public let heading3Style: TextStyle
-    public let heading4Style: TextStyle
-    public let heading5Style: TextStyle
-    public let heading6Style: TextStyle
-    public let linkStyle: TextStyle
+    public let heading1Style: MarkdownStyle
+    public let heading2Style: MarkdownStyle
+    public let heading3Style: MarkdownStyle
+    public let heading4Style: MarkdownStyle
+    public let heading5Style: MarkdownStyle
+    public let heading6Style: MarkdownStyle
+    public let linkStyle: MarkdownStyle
+    public let thematicBreakStyle: ThematicBreakStyle
 
     public init(paragraphStyle: NSParagraphStyle = .markdownDefault,
                 textStyle: TextStyle = .init(font: .systemFont(ofSize: 17)),
@@ -29,14 +31,15 @@ public struct MarkdowntownStylesheet {
                 strongStyle: TextStyle = .init(font: .boldSystemFont(ofSize: 17)),
                 strongEmphasisStyle: TextStyle = .init(font: .systemFont(ofSize: 17).bold.italic),
                 strikethroughStyle: TextStyle = .init(font: .systemFont(ofSize: 17)),
-                codeStyle: InsetTextStyle = .init(font: .monospacedSystemFont(ofSize: 16, weight: .regular), backgroundColor: .lightGray),
+                codeStyle: InsetTextStyle = .init(font: .monospacedSystemFont(ofSize: 15, weight: .regular), backgroundColor: .mdt_codeBlock),
                 heading1Style: TextStyle = .init(font: .boldSystemFont(ofSize: 28)),
                 heading2Style: TextStyle = .init(font: .boldSystemFont(ofSize: 26)),
                 heading3Style: TextStyle = .init(font: .boldSystemFont(ofSize: 24)),
                 heading4Style: TextStyle = .init(font: .boldSystemFont(ofSize: 24)),
                 heading5Style: TextStyle = .init(font: .boldSystemFont(ofSize: 20)),
                 heading6Style: TextStyle = .init(font: .boldSystemFont(ofSize: 20)),
-                linkStyle: TextStyle = .init(textColor: .systemBlue, font: .systemFont(ofSize: 17))
+                linkStyle: TextStyle = .init(textColor: .systemBlue, font: .systemFont(ofSize: 17)),
+                thematicBreakStyle: ThematicBreakStyle = .init(thickness: .thin, color: .mdt_thematicBreak)
     ) {
         self.textStyle = textStyle
         self.paragraphStyle = paragraphStyle
@@ -52,6 +55,7 @@ public struct MarkdowntownStylesheet {
         self.heading5Style = heading5Style
         self.heading6Style = heading6Style
         self.linkStyle = linkStyle
+        self.thematicBreakStyle = thematicBreakStyle
     }
     
     func applyStyling(to string: NSMutableAttributedString, withStyle style: MarkdownStyle) {
@@ -98,7 +102,7 @@ public struct MarkdowntownStylesheet {
     }
     
     func applyStyling(heading: NSMutableAttributedString, atLevel level: Int) {
-        var style: TextStyle
+        var style: MarkdownStyle
         
         switch level {
         case 1: style = heading1Style
@@ -131,4 +135,15 @@ public struct MarkdowntownStylesheet {
             heading.addAttribute(.backgroundColor, value: bgColor)
         }
     }
+    
+    func applyStyling(thematicBreak: NSMutableAttributedString) {
+        thematicBreak.setAttributes([.strikethroughStyle: thematicBreakStyle.thickness.underlineStyle.rawValue,
+                                     .strikethroughColor: thematicBreakStyle.color])
+    }
+}
+
+
+public extension UIColor {
+    static let mdt_codeBlock = UIColor(red: 246/255.0, green: 248/255.0, blue: 250/255.0, alpha: 1)
+    static let mdt_thematicBreak = UIColor(red: 235/255.0, green: 238/255.0, blue: 241/255.0, alpha: 1)
 }
