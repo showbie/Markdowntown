@@ -98,7 +98,7 @@ public struct Markdowntown {
             let result = joinedVisitedChildren(for: listItem)
             
             if listItem.hasSuccessor {
-                result.append(applyTextStyle("\n\n"))
+                result.append(applyTextStyle("\n"))
             }
             
             return result
