@@ -131,8 +131,7 @@ public struct Markdowntown {
             let depth = unorderedList.depth
             
             for item in unorderedList.listItems {
-                let tabs: NSMutableAttributedString = NSMutableAttributedString(string: Array(repeating: "\t", count: depth).joined())
-                stylesheet.applyStyling(text: tabs)
+                let tabs = Array(repeating: "\t", count: depth).joined()
                 result.append(applyTextStyle("\(tabs)• "))
                 result.append(visit(item))
             }
