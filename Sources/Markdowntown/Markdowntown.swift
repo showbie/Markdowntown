@@ -61,7 +61,7 @@ public struct Markdowntown {
         }
         
         mutating func visitThematicBreak(_ thematicBreak: ThematicBreak) -> NSAttributedString {
-            let newLines = thematicBreak.hasSuccessor ? "\n\n" : ""
+            let newLines = thematicBreak.hasSuccessor ? "\n" : ""
             
             let result = NSMutableAttributedString(string: "\u{00A0} \u{0009} \u{00A0}\(newLines)")
             
@@ -76,7 +76,7 @@ public struct Markdowntown {
             stylesheet.applyStyling(heading: result, atLevel: heading.level)
             
             if heading.hasSuccessor {
-                result.append(applyTextStyle("\n\n"))
+                result.append(applyTextStyle("\n"))
             }
             
             return result
@@ -119,7 +119,7 @@ public struct Markdowntown {
             }
             
             if orderedList.hasSuccessor {
-                result.append(applyTextStyle("\n\n"))
+                result.append(applyTextStyle("\n"))
             }
             
             return result
@@ -137,7 +137,7 @@ public struct Markdowntown {
             }
             
             if unorderedList.hasSuccessor {
-                result.append(applyTextStyle("\n\n"))
+                result.append(applyTextStyle("\n"))
             }
             
             return result
