@@ -22,17 +22,14 @@ public struct Markdowntown {
     private struct _Markdowntown: MarkupVisitor {
         // MARK: Private Properties
         private let stylesheet: MarkdowntownStylesheet
-        
-        
+
         // MARK: - Lifecycle
-        
         init(stylesheet: MarkdowntownStylesheet) {
             self.stylesheet = stylesheet
         }
         
         
         // MARK: - Public Methods
-        
         mutating func attributedString(from markdown: String) -> NSAttributedString {
             attributedString(from: Document(parsing: markdown))
         }
@@ -43,7 +40,6 @@ public struct Markdowntown {
         
         
         // MARK: - MarkupVisitor
-        
         mutating func defaultVisit(_ markup: Markup) -> NSAttributedString {
             joinedVisitedChildren(for: markup)
         }
@@ -80,7 +76,7 @@ public struct Markdowntown {
             stylesheet.applyStyling(heading: result, atLevel: heading.level)
             
             if heading.hasSuccessor {
-                result.append(NSAttributedString(string: "\n\n", attributes: stylesheet.textStyle))
+                result.append(applyTextStyle("\n\n"))
             }
             
             return result
@@ -102,7 +98,7 @@ public struct Markdowntown {
             let result = joinedVisitedChildren(for: listItem)
             
             if listItem.hasSuccessor {
-                result.append(NSAttributedString(string: "\n", attributes: stylesheet.textStyle))
+                result.append(applyTextStyle("\n"))
             }
             
             return result
@@ -118,12 +114,12 @@ public struct Markdowntown {
                 let string = number.string(from: NSNumber(value: index + 1))!
                 
                 let tabs = Array(repeating: "\t", count: depth).joined()
-                result.append(NSAttributedString(string: "\(tabs)\(string). ", attributes: stylesheet.textStyle))
+                result.append(applyTextStyle("\(tabs)\(string). "))
                 result.append(visit(item))
             }
             
             if orderedList.hasSuccessor {
-                result.append(NSAttributedString(string: "\n\n", attributes: stylesheet.textStyle))
+                result.append(applyTextStyle("\n\n"))
             }
             
             return result
@@ -135,13 +131,14 @@ public struct Markdowntown {
             let depth = unorderedList.depth
             
             for item in unorderedList.listItems {
-                let tabs = Array(repeating: "\t", count: depth).joined()
-                result.append(NSAttributedString(string: "\(tabs)• ", attributes: stylesheet.textStyle))
+                let tabs: NSMutableAttributedString = NSMutableAttributedString(string: Array(repeating: "\t", count: depth).joined())
+                stylesheet.applyStyling(text: tabs)
+                result.append(applyTextStyle("\(tabs)• "))
                 result.append(visit(item))
             }
             
             if unorderedList.hasSuccessor {
-                result.append(NSAttributedString(string: "\n\n", attributes: stylesheet.textStyle))
+                result.append(applyTextStyle("\n\n"))
             }
             
             return result
@@ -152,10 +149,10 @@ public struct Markdowntown {
             
             if paragraph.hasSuccessor {
                 if paragraph.isInList {
-                    result.append(NSMutableAttributedString(string: "\n"))
+                    result.append(applyTextStyle("\n"))
                 }
                 else {
-                    result.append(NSMutableAttributedString(string: "\n\n"))
+                    result.append(applyTextStyle("\n\n"))
                 }
             }
             
@@ -202,7 +199,7 @@ public struct Markdowntown {
         //    }
         
         mutating func visitLineBreak(_ lineBreak: LineBreak) -> NSAttributedString {
-            NSAttributedString(string: "\n", attributes: stylesheet.textStyle)
+            applyTextStyle("\n\n")
         }
         
         mutating func visitLink(_ link: Link) -> NSAttributedString {
@@ -218,7 +215,7 @@ public struct Markdowntown {
         }
         
         mutating func visitSoftBreak(_ softBreak: SoftBreak) -> NSAttributedString {
-            NSAttributedString(string: "\n", attributes: stylesheet.textStyle)
+            applyTextStyle("\n")
         }
         
         mutating func visitStrong(_ strong: Strong) -> NSAttributedString {
@@ -249,11 +246,12 @@ public struct Markdowntown {
             
             return result
         }
+        
+        private mutating func applyTextStyle(_ string: String) -> NSAttributedString {
+            visitText(Text(string))
+        }
     }
 }
-
-
-
 
 extension MarkupVisitor where Result == NSAttributedString {
     /// Visits all children of the provided markup node and joins all results into an
