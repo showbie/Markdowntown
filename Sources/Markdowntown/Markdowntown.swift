@@ -80,7 +80,7 @@ public struct Markdowntown {
             stylesheet.applyStyling(heading: result, atLevel: heading.level)
             
             if heading.hasSuccessor {
-                result.append(NSAttributedString(string: "\n\n"))
+                result.append(NSAttributedString(string: "\n\n", attributes: stylesheet.textStyle))
             }
             
             return result
@@ -102,7 +102,7 @@ public struct Markdowntown {
             let result = joinedVisitedChildren(for: listItem)
             
             if listItem.hasSuccessor {
-                result.append(NSAttributedString(string: "\n"))
+                result.append(NSAttributedString(string: "\n", attributes: stylesheet.textStyle))
             }
             
             return result
@@ -118,12 +118,12 @@ public struct Markdowntown {
                 let string = number.string(from: NSNumber(value: index + 1))!
                 
                 let tabs = Array(repeating: "\t", count: depth).joined()
-                result.append(NSAttributedString(string: "\(tabs)\(string). "))
+                result.append(NSAttributedString(string: "\(tabs)\(string). ", attributes: stylesheet.textStyle))
                 result.append(visit(item))
             }
             
             if orderedList.hasSuccessor {
-                result.append(NSAttributedString(string: "\n\n"))
+                result.append(NSAttributedString(string: "\n\n", attributes: stylesheet.textStyle))
             }
             
             return result
@@ -136,12 +136,12 @@ public struct Markdowntown {
             
             for item in unorderedList.listItems {
                 let tabs = Array(repeating: "\t", count: depth).joined()
-                result.append(NSAttributedString(string: "\(tabs)• "))
+                result.append(NSAttributedString(string: "\(tabs)• ", attributes: stylesheet.textStyle))
                 result.append(visit(item))
             }
             
             if unorderedList.hasSuccessor {
-                result.append(NSAttributedString(string: "\n\n"))
+                result.append(NSAttributedString(string: "\n\n", attributes: stylesheet.textStyle))
             }
             
             return result
@@ -202,7 +202,7 @@ public struct Markdowntown {
         //    }
         
         mutating func visitLineBreak(_ lineBreak: LineBreak) -> NSAttributedString {
-            NSAttributedString(string: "\n")
+            NSAttributedString(string: "\n", attributes: stylesheet.textStyle)
         }
         
         mutating func visitLink(_ link: Link) -> NSAttributedString {
@@ -218,7 +218,7 @@ public struct Markdowntown {
         }
         
         mutating func visitSoftBreak(_ softBreak: SoftBreak) -> NSAttributedString {
-            NSAttributedString(string: "\n")
+            NSAttributedString(string: "\n", attributes: stylesheet.textStyle)
         }
         
         mutating func visitStrong(_ strong: Strong) -> NSAttributedString {
