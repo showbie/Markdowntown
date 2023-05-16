@@ -47,16 +47,23 @@ public struct Markdowntown {
             
             if configuration.useCodeBlock {
                 result = NSMutableAttributedString(string: codeBlock.code)
+
+                if codeBlock.hasSuccessor {
+                    result.append(NSAttributedString(string: "\n\n"))
+                }
+
                 stylesheet.applyStyling(codeBlock: result)
             }
             else {
                 result = NSMutableAttributedString(string: codeBlock.format())
+
+                if codeBlock.hasSuccessor {
+                    result.append(NSAttributedString(string: "\n\n"))
+                }
+                
+                stylesheet.applyStyling(text: result)
             }
-            
-            if codeBlock.hasSuccessor {
-                result.append(applyTextStyle("\n\n"))
-            }
-            
+
             return result
         }
         
@@ -65,14 +72,21 @@ public struct Markdowntown {
             
             if configuration.useThematicBreak {
                 result = NSMutableAttributedString(string: "\u{00A0} \u{0009} \u{00A0}")
+                
+                if thematicBreak.hasSuccessor {
+                    result.append(NSAttributedString(string: "\n"))
+                }
+
                 stylesheet.applyStyling(thematicBreak: result)
             }
             else {
                 result = NSMutableAttributedString(string: thematicBreak.format())
-            }
-            
-            if thematicBreak.hasSuccessor {
-                result.append(applyTextStyle("\n"))
+                
+                if thematicBreak.hasSuccessor {
+                    result.append(NSAttributedString(string: "\n"))
+                }
+
+                stylesheet.applyStyling(text: result)
             }
             
             return result
@@ -87,22 +101,31 @@ public struct Markdowntown {
                (heading.level == 4 && configuration.useHeading4) ||
                (heading.level == 5 && configuration.useHeading5) ||
                (heading.level == 6 && configuration.useHeading6) {
-                result = joinedVisitedChildren(for: heading)
+                result = NSMutableAttributedString(string: heading.plainText)
+                
+                if heading.hasSuccessor {
+                    result.append(NSAttributedString(string: "\n"))
+                }
+                
                 stylesheet.applyStyling(heading: result, atLevel: heading.level)
             }
             else {
                 result = NSMutableAttributedString(string: heading.format())
+                
+                if heading.hasSuccessor {
+                    result.append(NSAttributedString(string: "\n"))
+                }
+                
+                stylesheet.applyStyling(text: result)
             }
             
-            if heading.hasSuccessor {
-                result.append(applyTextStyle("\n"))
-            }
+
             
             return result
         }
         
         mutating func visitHTMLBlock(_ html: HTMLBlock) -> NSAttributedString {
-            guard configuration.useHTMLBlock else { return NSAttributedString(string: html.rawHTML) }
+            guard configuration.useHTMLBlock else { return applyTextStyle(html.rawHTML) }
             
             let result = NSMutableAttributedString()
             
@@ -116,13 +139,13 @@ public struct Markdowntown {
         }
         
         mutating func visitListItem(_ listItem: ListItem) -> NSAttributedString {
-            let result: NSMutableAttributedString
+            let result = NSMutableAttributedString()
             
             if configuration.useOrderedList || configuration.useUnorderedList {
-                result = joinedVisitedChildren(for: listItem)
+                result.append(joinedVisitedChildren(for: listItem))
             }
             else {
-                result = NSMutableAttributedString(string: listItem.format())
+                result.append(applyTextStyle(listItem.format()))
             }
             
             if listItem.hasSuccessor {
@@ -133,11 +156,9 @@ public struct Markdowntown {
         }
         
         mutating func visitOrderedList(_ orderedList: OrderedList) -> NSAttributedString {
-            let result: NSMutableAttributedString
+            let result = NSMutableAttributedString()
 
             if configuration.useOrderedList {
-                result = NSMutableAttributedString()
-
                 let depth = orderedList.depth
                 
                 for (index, item) in orderedList.listItems.enumerated() {
@@ -150,7 +171,7 @@ public struct Markdowntown {
                 }
             }
             else {
-                result = NSMutableAttributedString(string: orderedList.format())
+                result.append(applyTextStyle(orderedList.format()))
             }
 
             if orderedList.hasSuccessor {
@@ -161,10 +182,9 @@ public struct Markdowntown {
         }
         
         mutating func visitUnorderedList(_ unorderedList: UnorderedList) -> NSAttributedString {
-            let result: NSMutableAttributedString
+            let result = NSMutableAttributedString()
             
             if configuration.useUnorderedList {
-                result = NSMutableAttributedString()
                 let depth = unorderedList.depth
                 
                 for item in unorderedList.listItems {
@@ -174,7 +194,7 @@ public struct Markdowntown {
                 }
             }
             else {
-                result = NSMutableAttributedString(string: unorderedList.format())
+                result.append(applyTextStyle(unorderedList.format()))
             }
             
             if unorderedList.hasSuccessor {
@@ -189,10 +209,10 @@ public struct Markdowntown {
             
             if paragraph.hasSuccessor {
                 if paragraph.isInList {
-                    result.append(applyTextStyle("\n"))
+                    result.append(NSAttributedString(string: "\n"))
                 }
                 else {
-                    result.append(applyTextStyle("\n\n"))
+                    result.append(NSAttributedString(string: "\n\n"))
                 }
             }
             
@@ -202,7 +222,7 @@ public struct Markdowntown {
         }
         
         mutating func visitInlineCode(_ inlineCode: InlineCode) -> NSAttributedString {
-            guard configuration.useInlineCode else { return NSAttributedString(string: inlineCode.format()) }
+            guard configuration.useInlineCode else { return applyTextStyle(inlineCode.format()) }
             
             let result = NSMutableAttributedString(string: inlineCode.code)
             stylesheet.applyStyling(inlineCode: result)
@@ -211,7 +231,7 @@ public struct Markdowntown {
         }
         
         mutating func visitStrong(_ strong: Strong) -> NSAttributedString {
-            guard configuration.useStrong else { return NSAttributedString(string: strong.format()) }
+            guard configuration.useStrong else { return applyTextStyle(strong.format()) }
 
             let result = joinedVisitedChildren(for: strong)
             
@@ -226,7 +246,7 @@ public struct Markdowntown {
         }
         
         mutating func visitEmphasis(_ emphasis: Emphasis) -> NSAttributedString {
-            guard configuration.useEmphasis else { return NSAttributedString(string: emphasis.format()) }
+            guard configuration.useEmphasis else { return applyTextStyle(emphasis.format()) }
             
             let result = joinedVisitedChildren(for: emphasis)
             
@@ -265,7 +285,7 @@ public struct Markdowntown {
         }
         
         mutating func visitLink(_ link: Link) -> NSAttributedString {
-            guard configuration.useLink else { return NSAttributedString(string: link.format()) }
+            guard configuration.useLink else { return applyTextStyle(link.format()) }
 
             let result = joinedVisitedChildren(for: link)
                         
@@ -287,7 +307,7 @@ public struct Markdowntown {
         }
         
         mutating func visitStrikethrough(_ strikethrough: Strikethrough) -> NSAttributedString {
-            guard configuration.useStrikethrough else { return NSAttributedString(string: strikethrough.format()) }
+            guard configuration.useStrikethrough else { return applyTextStyle(strikethrough.format()) }
 
             let result = joinedVisitedChildren(for: strikethrough)
             
