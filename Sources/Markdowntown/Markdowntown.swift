@@ -50,7 +50,7 @@ public struct Markdowntown {
                 stylesheet.applyStyling(codeBlock: result)
             }
             else {
-                result = joinedVisitedChildren(for: codeBlock)
+                result = NSMutableAttributedString(string: codeBlock.format())
             }
             
             if codeBlock.hasSuccessor {
@@ -68,7 +68,7 @@ public struct Markdowntown {
                 stylesheet.applyStyling(thematicBreak: result)
             }
             else {
-                result = joinedVisitedChildren(for: thematicBreak)
+                result = NSMutableAttributedString(string: thematicBreak.format())
             }
             
             if thematicBreak.hasSuccessor {
@@ -79,15 +79,19 @@ public struct Markdowntown {
         }
         
         mutating func visitHeading(_ heading: Heading) -> NSAttributedString {
-            let result = joinedVisitedChildren(for: heading)
-
+            let result: NSMutableAttributedString
+            
             if (heading.level == 1 && configuration.useHeading1) ||
                (heading.level == 2 && configuration.useHeading2) ||
                (heading.level == 3 && configuration.useHeading3) ||
                (heading.level == 4 && configuration.useHeading4) ||
                (heading.level == 5 && configuration.useHeading5) ||
                (heading.level == 6 && configuration.useHeading6) {
+                result = joinedVisitedChildren(for: heading)
                 stylesheet.applyStyling(heading: result, atLevel: heading.level)
+            }
+            else {
+                result = NSMutableAttributedString(string: heading.plainText)
             }
             
             if heading.hasSuccessor {
@@ -98,7 +102,7 @@ public struct Markdowntown {
         }
         
         mutating func visitHTMLBlock(_ html: HTMLBlock) -> NSAttributedString {
-            guard configuration.useHTMLBlock else { return joinedVisitedChildren(for: html) }
+            guard configuration.useHTMLBlock else { return NSAttributedString(string: html.rawHTML) }
             
             let result = NSMutableAttributedString()
             
@@ -112,7 +116,14 @@ public struct Markdowntown {
         }
         
         mutating func visitListItem(_ listItem: ListItem) -> NSAttributedString {
-            let result = joinedVisitedChildren(for: listItem)
+            let result: NSMutableAttributedString
+            
+            if configuration.useOrderedList || configuration.useUnorderedList {
+                result = joinedVisitedChildren(for: listItem)
+            }
+            else {
+                result = NSMutableAttributedString(string: listItem.format())
+            }
             
             if listItem.hasSuccessor {
                 result.append(applyTextStyle("\n"))
@@ -139,7 +150,7 @@ public struct Markdowntown {
                 }
             }
             else {
-                result = joinedVisitedChildren(for: orderedList)
+                result = NSMutableAttributedString(string: orderedList.format())
             }
 
             if orderedList.hasSuccessor {
@@ -163,7 +174,7 @@ public struct Markdowntown {
                 }
             }
             else {
-                result = joinedVisitedChildren(for: unorderedList)
+                result = NSMutableAttributedString(string: unorderedList.format())
             }
             
             if unorderedList.hasSuccessor {
@@ -191,7 +202,7 @@ public struct Markdowntown {
         }
         
         mutating func visitInlineCode(_ inlineCode: InlineCode) -> NSAttributedString {
-            guard configuration.useInlineCode else { return joinedVisitedChildren(for: inlineCode) }
+            guard configuration.useInlineCode else { return NSAttributedString(string: inlineCode.plainText) }
             
             let result = NSMutableAttributedString(string: inlineCode.code)
             stylesheet.applyStyling(inlineCode: result)
@@ -199,12 +210,27 @@ public struct Markdowntown {
             return result
         }
         
+        mutating func visitStrong(_ strong: Strong) -> NSAttributedString {
+            guard configuration.useStrong else { return NSAttributedString(string: strong.plainText) }
+
+            let result = joinedVisitedChildren(for: strong)
+            
+            if strong.parent is Emphasis {
+                stylesheet.applyStyling(strongEmphasis: result)
+            }
+            else if !(strong.child(at: 0) is Emphasis) {
+                stylesheet.applyStyling(strong: result)
+            }
+            
+            return result
+        }
+        
         mutating func visitEmphasis(_ emphasis: Emphasis) -> NSAttributedString {
-            guard configuration.useEmphasis else { return joinedVisitedChildren(for: emphasis) }
+            guard configuration.useEmphasis else { return NSAttributedString(string: emphasis.plainText) }
             
             let result = joinedVisitedChildren(for: emphasis)
             
-            if emphasis.parent is Strong {
+            if emphasis.parent is Strong, configuration.useStrong {
                 stylesheet.applyStyling(strongEmphasis: result)
             }
             else if !(emphasis.child(at: 0) is Strong) {
@@ -239,7 +265,7 @@ public struct Markdowntown {
         }
         
         mutating func visitLink(_ link: Link) -> NSAttributedString {
-            guard configuration.useLink else { return joinedVisitedChildren(for: link) }
+            guard configuration.useLink else { return NSAttributedString(string: link.plainText) }
 
             let result = joinedVisitedChildren(for: link)
                         
@@ -251,22 +277,7 @@ public struct Markdowntown {
             
             return result
         }
-        
-        mutating func visitStrong(_ strong: Strong) -> NSAttributedString {
-            guard configuration.useStrong else { return joinedVisitedChildren(for: strong) }
 
-            let result = joinedVisitedChildren(for: strong)
-            
-            if strong.parent is Emphasis {
-                stylesheet.applyStyling(strongEmphasis: result)
-            }
-            else if !(strong.child(at: 0) is Emphasis) {
-                stylesheet.applyStyling(strong: result)
-            }
-            
-            return result
-        }
-        
         mutating func visitText(_ text: Text) -> NSAttributedString {
             let string = NSMutableAttributedString(string: text.plainText)
             
@@ -276,7 +287,7 @@ public struct Markdowntown {
         }
         
         mutating func visitStrikethrough(_ strikethrough: Strikethrough) -> NSAttributedString {
-            guard configuration.useStrikethrough else { return joinedVisitedChildren(for: strikethrough) }
+            guard configuration.useStrikethrough else { return NSAttributedString(string: strikethrough.plainText) }
 
             let result = joinedVisitedChildren(for: strikethrough)
             
