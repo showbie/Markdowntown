@@ -82,6 +82,10 @@ public struct Markdowntown {
             
             stylesheet.applyStyling(heading: result, atLevel: heading.level)
             
+            if heading.hasSuccessor {
+                result.append(applyTextStyle("\n"))
+            }
+            
             return result
         }
         
@@ -100,7 +104,15 @@ public struct Markdowntown {
         }
         
         mutating func visitListItem(_ listItem: ListItem) -> NSAttributedString {
-            joinedVisitedChildren(for: listItem)
+            guard configuration.useUnorderedList || configuration.useOrderedList else { return joinedVisitedChildren(for: listItem) }
+
+            let result = joinedVisitedChildren(for: listItem)
+            
+            if listItem.hasSuccessor {
+                result.append(applyTextStyle("\n"))
+            }
+            
+            return result
         }
         
         mutating func visitOrderedList(_ orderedList: OrderedList) -> NSAttributedString {
@@ -140,7 +152,7 @@ public struct Markdowntown {
             }
             
             if unorderedList.hasSuccessor {
-                result.append(applyTextStyle("\n"))
+                result.append(applyTextStyle("\n\n"))
             }
             
             return result
@@ -152,8 +164,11 @@ public struct Markdowntown {
             let result = joinedVisitedChildren(for: paragraph)
             
             if paragraph.hasSuccessor {
-                if !paragraph.isInList {
+                if paragraph.isInList {
                     result.append(applyTextStyle("\n"))
+                }
+                else {
+                    result.append(applyTextStyle("\n\n"))
                 }
             }
             
@@ -271,16 +286,10 @@ extension MarkupVisitor where Result == NSAttributedString {
     /// - Returns: An `NSMutableAttributedString` containing the results of all visited
     /// children.
     mutating func joinedVisitedChildren(for markup: Markup) -> NSMutableAttributedString {
-        let mutableAttributedString = markup.children
+        markup.children
             .map { visit($0) }
             .reduce(into: NSMutableAttributedString()) {
                 $0.append($1)
             }
-        
-        if markup.hasSuccessor {
-            mutableAttributedString.append(NSAttributedString(string: "\n"))
-        }
-        
-        return mutableAttributedString
     }
 }

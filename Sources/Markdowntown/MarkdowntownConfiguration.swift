@@ -21,6 +21,8 @@ public struct MarkdowntownConfiguration {
     let useOrderedList: Bool
     let useUnorderedList: Bool
     let useParagraph: Bool
+    let useSoftBreak: Bool
+    let useLineBreak: Bool
     let useInlineCode: Bool
     let useCodeBlock: Bool
     let useThematicBreak: Bool
@@ -39,6 +41,8 @@ public struct MarkdowntownConfiguration {
                 useOrderedList: Bool,
                 useUnorderedList: Bool,
                 useParagraph: Bool,
+                useSoftBreak: Bool,
+                useLineBreak: Bool,
                 useInlineCode: Bool,
                 useCodeBlock: Bool,
                 useThematicBreak: Bool,
@@ -56,6 +60,8 @@ public struct MarkdowntownConfiguration {
         self.useOrderedList = useOrderedList
         self.useUnorderedList = useUnorderedList
         self.useParagraph = useParagraph
+        self.useSoftBreak = useSoftBreak
+        self.useLineBreak = useLineBreak
         self.useInlineCode = useInlineCode
         self.useCodeBlock = useCodeBlock
         self.useThematicBreak = useThematicBreak
@@ -75,6 +81,8 @@ public struct MarkdowntownConfiguration {
                                                             useOrderedList: true,
                                                             useUnorderedList: true,
                                                             useParagraph: true,
+                                                            useSoftBreak: true,
+                                                            useLineBreak: true,
                                                             useInlineCode: true,
                                                             useCodeBlock: true,
                                                             useThematicBreak: true,
