@@ -159,8 +159,6 @@ public struct Markdowntown {
         }
         
         mutating func visitParagraph(_ paragraph: Paragraph) -> NSAttributedString {
-            guard configuration.useParagraph else { return joinedVisitedChildren(for: paragraph) }
-
             let result = joinedVisitedChildren(for: paragraph)
             
             if paragraph.hasSuccessor {
@@ -218,9 +216,12 @@ public struct Markdowntown {
         //        return result
         //    }
         
+        mutating func visitSoftBreak(_ softBreak: SoftBreak) -> NSAttributedString {
+            applyTextStyle("\n")
+        }
+        
         mutating func visitLineBreak(_ lineBreak: LineBreak) -> NSAttributedString {
-            guard configuration.useLineBreak else { return joinedVisitedChildren(for: lineBreak) }
-            return applyTextStyle("\n\n")
+            applyTextStyle("\n\n")
         }
         
         mutating func visitLink(_ link: Link) -> NSAttributedString {
@@ -235,11 +236,6 @@ public struct Markdowntown {
             }
             
             return result
-        }
-        
-        mutating func visitSoftBreak(_ softBreak: SoftBreak) -> NSAttributedString {
-            guard configuration.useSoftBreak else { return joinedVisitedChildren(for: softBreak) }
-            return applyTextStyle("\n")
         }
         
         mutating func visitStrong(_ strong: Strong) -> NSAttributedString {
