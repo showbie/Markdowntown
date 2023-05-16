@@ -3,31 +3,30 @@ import Markdown
 import UIKit
 
 public struct Markdowntown {
+    // MARK: - Initializer
     public init() { }
     
     // MARK: - Public Methods
-    
-    public func attributedString(from markdown: String, stylesheet: MarkdowntownStylesheet = .init()) -> NSAttributedString {
-        attributedString(from: Document(parsing: markdown), stylesheet: stylesheet)
+    public func attributedString(from markdown: String, stylesheet: MarkdowntownStylesheet = .init(), configuration: MarkdowntownConfiguration = .default) -> NSAttributedString {
+        attributedString(from: Document(parsing: markdown), stylesheet: stylesheet, configuration: configuration)
     }
     
-    public func attributedString(from document: Document, stylesheet: MarkdowntownStylesheet = .init()) -> NSAttributedString {
-        var markdowntown = _Markdowntown(stylesheet: stylesheet)
+    public func attributedString(from document: Document, stylesheet: MarkdowntownStylesheet = .init(), configuration: MarkdowntownConfiguration = .default) -> NSAttributedString {
+        var markdowntown = _Markdowntown(stylesheet: stylesheet, configuration: configuration)
         return markdowntown.attributedString(from: document)
     }
     
-
     // MARK: - Markup Parser
-    
     private struct _Markdowntown: MarkupVisitor {
         // MARK: Private Properties
+        private let configuration: MarkdowntownConfiguration
         private let stylesheet: MarkdowntownStylesheet
 
         // MARK: - Lifecycle
-        init(stylesheet: MarkdowntownStylesheet) {
+        init(stylesheet: MarkdowntownStylesheet, configuration: MarkdowntownConfiguration) {
             self.stylesheet = stylesheet
+            self.configuration = configuration
         }
-        
         
         // MARK: - Public Methods
         mutating func attributedString(from markdown: String) -> NSAttributedString {
@@ -38,17 +37,14 @@ public struct Markdowntown {
             visit(document)
         }
         
-        
         // MARK: - MarkupVisitor
         mutating func defaultVisit(_ markup: Markup) -> NSAttributedString {
             joinedVisitedChildren(for: markup)
         }
         
-        //    mutating func visitBlockQuote(_ blockQuote: BlockQuote) -> NSAttributedString {
-        //
-        //    }
-        
         mutating func visitCodeBlock(_ codeBlock: CodeBlock) -> NSAttributedString {
+            guard configuration.useCodeBlock else { return joinedVisitedChildren(for: codeBlock) }
+            
             let result = NSMutableAttributedString(string: codeBlock.code)
             
             stylesheet.applyStyling(codeBlock: result)
@@ -61,6 +57,8 @@ public struct Markdowntown {
         }
         
         mutating func visitThematicBreak(_ thematicBreak: ThematicBreak) -> NSAttributedString {
+            guard configuration.useThematicBreak else { return joinedVisitedChildren(for: thematicBreak) }
+            
             let newLines = thematicBreak.hasSuccessor ? "\n" : ""
             
             let result = NSMutableAttributedString(string: "\u{00A0} \u{0009} \u{00A0}\(newLines)")
@@ -71,6 +69,15 @@ public struct Markdowntown {
         }
         
         mutating func visitHeading(_ heading: Heading) -> NSAttributedString {
+            if (heading.level == 1 && !configuration.useHeading1) ||
+               (heading.level == 2 && !configuration.useHeading2) ||
+               (heading.level == 3 && !configuration.useHeading3) ||
+               (heading.level == 4 && !configuration.useHeading4) ||
+               (heading.level == 5 && !configuration.useHeading5) ||
+               (heading.level == 6 && !configuration.useHeading6) {
+                return joinedVisitedChildren(for: heading)
+            }
+                
             let result = joinedVisitedChildren(for: heading)
             
             stylesheet.applyStyling(heading: result, atLevel: heading.level)
@@ -83,6 +90,8 @@ public struct Markdowntown {
         }
         
         mutating func visitHTMLBlock(_ html: HTMLBlock) -> NSAttributedString {
+            guard configuration.useHTMLBlock else { return joinedVisitedChildren(for: html) }
+            
             let result = NSMutableAttributedString()
             
             let data = Data(html.rawHTML.utf8)
@@ -95,6 +104,8 @@ public struct Markdowntown {
         }
         
         mutating func visitListItem(_ listItem: ListItem) -> NSAttributedString {
+            guard configuration.useUnorderedList || configuration.useOrderedList else { return joinedVisitedChildren(for: listItem) }
+
             let result = joinedVisitedChildren(for: listItem)
             
             if listItem.hasSuccessor {
@@ -105,6 +116,8 @@ public struct Markdowntown {
         }
         
         mutating func visitOrderedList(_ orderedList: OrderedList) -> NSAttributedString {
+            guard configuration.useOrderedList else { return joinedVisitedChildren(for: orderedList) }
+
             let result = NSMutableAttributedString()
             
             let depth = orderedList.depth
@@ -126,6 +139,8 @@ public struct Markdowntown {
         }
         
         mutating func visitUnorderedList(_ unorderedList: UnorderedList) -> NSAttributedString {
+            guard configuration.useUnorderedList else { return joinedVisitedChildren(for: unorderedList) }
+
             let result = NSMutableAttributedString()
             
             let depth = unorderedList.depth
@@ -144,6 +159,8 @@ public struct Markdowntown {
         }
         
         mutating func visitParagraph(_ paragraph: Paragraph) -> NSAttributedString {
+            guard configuration.useParagraph else { return joinedVisitedChildren(for: paragraph) }
+
             let result = joinedVisitedChildren(for: paragraph)
             
             if paragraph.hasSuccessor {
@@ -161,6 +178,8 @@ public struct Markdowntown {
         }
         
         mutating func visitInlineCode(_ inlineCode: InlineCode) -> NSAttributedString {
+            guard configuration.useInlineCode else { return joinedVisitedChildren(for: inlineCode) }
+            
             let result = NSMutableAttributedString(string: inlineCode.code)
             
             stylesheet.applyStyling(inlineCode: result)
@@ -169,6 +188,8 @@ public struct Markdowntown {
         }
         
         mutating func visitEmphasis(_ emphasis: Emphasis) -> NSAttributedString {
+            guard configuration.useEmphasis else { return joinedVisitedChildren(for: emphasis) }
+            
             let result = joinedVisitedChildren(for: emphasis)
             
             if emphasis.parent is Strong {
@@ -202,6 +223,8 @@ public struct Markdowntown {
         }
         
         mutating func visitLink(_ link: Link) -> NSAttributedString {
+            guard configuration.useLink else { return joinedVisitedChildren(for: link) }
+
             let result = joinedVisitedChildren(for: link)
                         
             if let destination = link.destination, let url = URL(string: destination) {
@@ -218,6 +241,8 @@ public struct Markdowntown {
         }
         
         mutating func visitStrong(_ strong: Strong) -> NSAttributedString {
+            guard configuration.useStrong else { return joinedVisitedChildren(for: strong) }
+
             let result = joinedVisitedChildren(for: strong)
             
             if strong.parent is Emphasis {
@@ -239,6 +264,8 @@ public struct Markdowntown {
         }
         
         mutating func visitStrikethrough(_ strikethrough: Strikethrough) -> NSAttributedString {
+            guard configuration.useStrikethrough else { return joinedVisitedChildren(for: strikethrough) }
+
             let result = joinedVisitedChildren(for: strikethrough)
             
             result.addAttribute(.strikethroughStyle, value: NSUnderlineStyle.single.rawValue)
