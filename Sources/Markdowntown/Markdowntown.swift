@@ -215,7 +215,7 @@ public struct Markdowntown {
 
             let result = joinedVisitedChildren(for: strong)
             
-            if strong.parent is Emphasis {
+            if strong.parent is Emphasis, configuration.useEmphasis {
                 stylesheet.applyStyling(strongEmphasis: result)
             }
             else if !(strong.child(at: 0) is Emphasis) {
