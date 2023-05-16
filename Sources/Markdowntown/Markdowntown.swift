@@ -219,7 +219,8 @@ public struct Markdowntown {
         //    }
         
         mutating func visitLineBreak(_ lineBreak: LineBreak) -> NSAttributedString {
-            applyTextStyle("\n\n")
+            guard configuration.useLineBreak else { return joinedVisitedChildren(for: lineBreak) }
+            return applyTextStyle("\n\n")
         }
         
         mutating func visitLink(_ link: Link) -> NSAttributedString {
@@ -237,7 +238,8 @@ public struct Markdowntown {
         }
         
         mutating func visitSoftBreak(_ softBreak: SoftBreak) -> NSAttributedString {
-            applyTextStyle("\n")
+            guard configuration.useSoftBreak else { return joinedVisitedChildren(for: softBreak) }
+            return applyTextStyle("\n")
         }
         
         mutating func visitStrong(_ strong: Strong) -> NSAttributedString {
