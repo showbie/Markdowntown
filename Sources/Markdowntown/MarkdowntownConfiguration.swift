@@ -27,22 +27,22 @@ public struct MarkdowntownConfiguration {
     let useHTMLBlock: Bool
 
     public init(useHeading1: Bool,
-         useHeading2: Bool,
-         useHeading3: Bool,
-         useHeading4: Bool,
-         useHeading5: Bool,
-         useHeading6: Bool,
-         useEmphasis: Bool,
-         useStrong: Bool,
-         useStrikethrough: Bool,
-         useLink: Bool,
-         useOrderedList: Bool,
-         useUnorderedList: Bool,
-         useParagraph: Bool,
-         useInlineCode: Bool,
-         useCodeBlock: Bool,
-         useThematicBreak: Bool,
-         useHTMLBlock: Bool) {
+                useHeading2: Bool,
+                useHeading3: Bool,
+                useHeading4: Bool,
+                useHeading5: Bool,
+                useHeading6: Bool,
+                useEmphasis: Bool,
+                useStrong: Bool,
+                useStrikethrough: Bool,
+                useLink: Bool,
+                useOrderedList: Bool,
+                useUnorderedList: Bool,
+                useParagraph: Bool,
+                useInlineCode: Bool,
+                useCodeBlock: Bool,
+                useThematicBreak: Bool,
+                useHTMLBlock: Bool) {
         self.useHeading1 = useHeading1
         self.useHeading2 = useHeading2
         self.useHeading3 = useHeading3
