@@ -1,5 +1,5 @@
 //
-//  File.swift
+//  MarkdowntownConfiguration.swift
 //  
 //
 //  Created by Gary Kash on 2023-05-15.
@@ -26,23 +26,23 @@ public struct MarkdowntownConfiguration {
     let useThematicBreak: Bool
     let useHTMLBlock: Bool
 
-    init(useHeading1: Bool = true,
-         useHeading2: Bool = true,
-         useHeading3: Bool = true,
-         useHeading4: Bool = true,
-         useHeading5: Bool = true,
-         useHeading6: Bool = true,
-         useEmphasis: Bool = true,
-         useStrong: Bool = true,
-         useStrikethrough: Bool = true,
-         useLink: Bool = true,
-         useOrderedList: Bool = true,
-         useUnorderedList: Bool = true,
-         useParagraph: Bool = true,
-         useInlineCode: Bool = true,
-         useCodeBlock: Bool = true,
-         useThematicBreak: Bool = true,
-         useHTMLBlock: Bool = true) {
+    public init(useHeading1: Bool,
+         useHeading2: Bool,
+         useHeading3: Bool,
+         useHeading4: Bool,
+         useHeading5: Bool,
+         useHeading6: Bool,
+         useEmphasis: Bool,
+         useStrong: Bool,
+         useStrikethrough: Bool,
+         useLink: Bool,
+         useOrderedList: Bool,
+         useUnorderedList: Bool,
+         useParagraph: Bool,
+         useInlineCode: Bool,
+         useCodeBlock: Bool,
+         useThematicBreak: Bool,
+         useHTMLBlock: Bool) {
         self.useHeading1 = useHeading1
         self.useHeading2 = useHeading2
         self.useHeading3 = useHeading3
@@ -62,5 +62,21 @@ public struct MarkdowntownConfiguration {
         self.useHTMLBlock = useHTMLBlock
     }
     
-    public static let `default` = MarkdowntownConfiguration()
+    public static let `default` = MarkdowntownConfiguration(useHeading1: true,
+                                                            useHeading2: true,
+                                                            useHeading3: true,
+                                                            useHeading4: true,
+                                                            useHeading5: true,
+                                                            useHeading6: true,
+                                                            useEmphasis: true,
+                                                            useStrong: true,
+                                                            useStrikethrough: true,
+                                                            useLink: true,
+                                                            useOrderedList: true,
+                                                            useUnorderedList: true,
+                                                            useParagraph: true,
+                                                            useInlineCode: true,
+                                                            useCodeBlock: true,
+                                                            useThematicBreak: true,
+                                                            useHTMLBlock: true)
 }
