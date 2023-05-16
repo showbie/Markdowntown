@@ -43,44 +43,52 @@ public struct Markdowntown {
         }
         
         mutating func visitCodeBlock(_ codeBlock: CodeBlock) -> NSAttributedString {
-            guard configuration.useCodeBlock else { return joinedVisitedChildren(for: codeBlock) }
+            let result: NSMutableAttributedString
             
-            let result = NSMutableAttributedString(string: codeBlock.code)
-            
-            stylesheet.applyStyling(codeBlock: result)
+            if configuration.useCodeBlock {
+                result = NSMutableAttributedString(string: codeBlock.code)
+                stylesheet.applyStyling(codeBlock: result)
+            }
+            else {
+                result = joinedVisitedChildren(for: codeBlock)
+            }
             
             if codeBlock.hasSuccessor {
-                result.append(NSMutableAttributedString(string: "\n\n"))
+                result.append(applyTextStyle("\n\n"))
             }
             
             return result
         }
         
         mutating func visitThematicBreak(_ thematicBreak: ThematicBreak) -> NSAttributedString {
-            guard configuration.useThematicBreak else { return joinedVisitedChildren(for: thematicBreak) }
+            let result: NSMutableAttributedString
             
-            let newLines = thematicBreak.hasSuccessor ? "\n" : ""
+            if configuration.useThematicBreak {
+                result = NSMutableAttributedString(string: "\u{00A0} \u{0009} \u{00A0}")
+                stylesheet.applyStyling(thematicBreak: result)
+            }
+            else {
+                result = joinedVisitedChildren(for: thematicBreak)
+            }
             
-            let result = NSMutableAttributedString(string: "\u{00A0} \u{0009} \u{00A0}\(newLines)")
-            
-            stylesheet.applyStyling(thematicBreak: result)
+            if thematicBreak.hasSuccessor {
+                result.append(applyTextStyle("\n"))
+            }
             
             return result
         }
         
         mutating func visitHeading(_ heading: Heading) -> NSAttributedString {
-            if (heading.level == 1 && !configuration.useHeading1) ||
-               (heading.level == 2 && !configuration.useHeading2) ||
-               (heading.level == 3 && !configuration.useHeading3) ||
-               (heading.level == 4 && !configuration.useHeading4) ||
-               (heading.level == 5 && !configuration.useHeading5) ||
-               (heading.level == 6 && !configuration.useHeading6) {
-                return joinedVisitedChildren(for: heading)
-            }
-                
             let result = joinedVisitedChildren(for: heading)
-            
-            stylesheet.applyStyling(heading: result, atLevel: heading.level)
+
+            if (heading.level == 1 && configuration.useHeading1) ||
+               (heading.level == 2 && configuration.useHeading2) ||
+               (heading.level == 3 && configuration.useHeading3) ||
+               (heading.level == 4 && configuration.useHeading4) ||
+               (heading.level == 5 && configuration.useHeading5) ||
+               (heading.level == 6 && configuration.useHeading6) {
+                stylesheet.applyStyling(heading: result, atLevel: heading.level)
+            }
             
             if heading.hasSuccessor {
                 result.append(applyTextStyle("\n"))
@@ -104,8 +112,6 @@ public struct Markdowntown {
         }
         
         mutating func visitListItem(_ listItem: ListItem) -> NSAttributedString {
-            guard configuration.useUnorderedList || configuration.useOrderedList else { return joinedVisitedChildren(for: listItem) }
-
             let result = joinedVisitedChildren(for: listItem)
             
             if listItem.hasSuccessor {
@@ -116,21 +122,26 @@ public struct Markdowntown {
         }
         
         mutating func visitOrderedList(_ orderedList: OrderedList) -> NSAttributedString {
-            guard configuration.useOrderedList else { return joinedVisitedChildren(for: orderedList) }
+            let result: NSMutableAttributedString
 
-            let result = NSMutableAttributedString()
-            
-            let depth = orderedList.depth
-            
-            for (index, item) in orderedList.listItems.enumerated() {
-                let number = NumberFormatter()
-                let string = number.string(from: NSNumber(value: index + 1))!
+            if configuration.useOrderedList {
+                result = NSMutableAttributedString()
+
+                let depth = orderedList.depth
                 
-                let tabs = Array(repeating: "\t", count: depth).joined()
-                result.append(applyTextStyle("\(tabs)\(string). "))
-                result.append(visit(item))
+                for (index, item) in orderedList.listItems.enumerated() {
+                    let number = NumberFormatter()
+                    let string = number.string(from: NSNumber(value: index + 1))!
+                    
+                    let tabs = Array(repeating: "\t", count: depth).joined()
+                    result.append(applyTextStyle("\(tabs)\(string). "))
+                    result.append(visit(item))
+                }
             }
-            
+            else {
+                result = joinedVisitedChildren(for: orderedList)
+            }
+
             if orderedList.hasSuccessor {
                 result.append(applyTextStyle("\n\n"))
             }
@@ -139,16 +150,20 @@ public struct Markdowntown {
         }
         
         mutating func visitUnorderedList(_ unorderedList: UnorderedList) -> NSAttributedString {
-            guard configuration.useUnorderedList else { return joinedVisitedChildren(for: unorderedList) }
-
-            let result = NSMutableAttributedString()
+            let result: NSMutableAttributedString
             
-            let depth = unorderedList.depth
-            
-            for item in unorderedList.listItems {
-                let tabs = Array(repeating: "\t", count: depth).joined()
-                result.append(applyTextStyle("\(tabs)• "))
-                result.append(visit(item))
+            if configuration.useUnorderedList {
+                result = NSMutableAttributedString()
+                let depth = unorderedList.depth
+                
+                for item in unorderedList.listItems {
+                    let tabs = Array(repeating: "\t", count: depth).joined()
+                    result.append(applyTextStyle("\(tabs)• "))
+                    result.append(visit(item))
+                }
+            }
+            else {
+                result = joinedVisitedChildren(for: unorderedList)
             }
             
             if unorderedList.hasSuccessor {
@@ -179,7 +194,6 @@ public struct Markdowntown {
             guard configuration.useInlineCode else { return joinedVisitedChildren(for: inlineCode) }
             
             let result = NSMutableAttributedString(string: inlineCode.code)
-            
             stylesheet.applyStyling(inlineCode: result)
             
             return result
