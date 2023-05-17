@@ -205,19 +205,15 @@ public struct Markdowntown {
         }
         
         mutating func visitParagraph(_ paragraph: Paragraph) -> NSAttributedString {
-            let result: NSMutableAttributedString // = joinedVisitedChildren(for: paragraph)
-//            let result = joinedVisitedChildren(for: paragraph)
+            let result = joinedVisitedChildren(for: paragraph)
             
             if paragraph.hasSuccessor {
                 if paragraph.isInList {
-                    result = NSMutableAttributedString(string: "\n")
+                    result.append(NSAttributedString(string: "\n"))
                 }
                 else {
-                    result = NSMutableAttributedString(string: "\n\n")
+                    result.append(NSAttributedString(string: "\n\n"))
                 }
-            }
-            else {
-                result = NSMutableAttributedString()
             }
             
             stylesheet.applyStyling(paragraph: result)
@@ -237,8 +233,7 @@ public struct Markdowntown {
         mutating func visitStrong(_ strong: Strong) -> NSAttributedString {
             guard configuration.useStrong else { return applyTextStyle(strong.format()) }
 
-            let result = NSMutableAttributedString(string: strong.plainText)
-//            let result = joinedVisitedChildren(for: strong)
+            let result = joinedVisitedChildren(for: strong)
             
             if strong.parent is Emphasis, configuration.useEmphasis {
                 stylesheet.applyStyling(strongEmphasis: result)
@@ -253,8 +248,7 @@ public struct Markdowntown {
         mutating func visitEmphasis(_ emphasis: Emphasis) -> NSAttributedString {
             guard configuration.useEmphasis else { return applyTextStyle(emphasis.format()) }
             
-            let result = NSMutableAttributedString(string: emphasis.plainText)
-//            let result = joinedVisitedChildren(for: emphasis)
+            let result = joinedVisitedChildren(for: emphasis)
             
             if emphasis.parent is Strong, configuration.useStrong {
                 stylesheet.applyStyling(strongEmphasis: result)
