@@ -95,12 +95,7 @@ public struct Markdowntown {
         mutating func visitHeading(_ heading: Heading) -> NSAttributedString {
             let result: NSMutableAttributedString
             
-            if (heading.level == 1 && configuration.useHeading1) ||
-               (heading.level == 2 && configuration.useHeading2) ||
-               (heading.level == 3 && configuration.useHeading3) ||
-               (heading.level == 4 && configuration.useHeading4) ||
-               (heading.level == 5 && configuration.useHeading5) ||
-               (heading.level == 6 && configuration.useHeading6) {
+            if (configuration.useHeadings) {
                 result = NSMutableAttributedString(string: heading.plainText)
                 
                 if heading.hasSuccessor {
@@ -141,7 +136,7 @@ public struct Markdowntown {
         mutating func visitListItem(_ listItem: ListItem) -> NSAttributedString {
             let result = NSMutableAttributedString()
             
-            if configuration.useOrderedList || configuration.useUnorderedList {
+            if configuration.useLists {
                 result.append(joinedVisitedChildren(for: listItem))
             }
             else {
@@ -158,7 +153,7 @@ public struct Markdowntown {
         mutating func visitOrderedList(_ orderedList: OrderedList) -> NSAttributedString {
             let result = NSMutableAttributedString()
 
-            if configuration.useOrderedList {
+            if configuration.useLists {
                 let depth = orderedList.depth
                 
                 for (index, item) in orderedList.listItems.enumerated() {
@@ -184,7 +179,7 @@ public struct Markdowntown {
         mutating func visitUnorderedList(_ unorderedList: UnorderedList) -> NSAttributedString {
             let result = NSMutableAttributedString()
             
-            if configuration.useUnorderedList {
+            if configuration.useLists {
                 let depth = unorderedList.depth
                 
                 for item in unorderedList.listItems {
