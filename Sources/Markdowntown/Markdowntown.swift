@@ -113,9 +113,7 @@ public struct Markdowntown {
                 
                 stylesheet.applyStyling(text: result)
             }
-            
 
-            
             return result
         }
         
