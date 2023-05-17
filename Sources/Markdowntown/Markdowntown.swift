@@ -205,15 +205,19 @@ public struct Markdowntown {
         }
         
         mutating func visitParagraph(_ paragraph: Paragraph) -> NSAttributedString {
-            let result = joinedVisitedChildren(for: paragraph)
+            let result: NSMutableAttributedString // = joinedVisitedChildren(for: paragraph)
+//            let result = joinedVisitedChildren(for: paragraph)
             
             if paragraph.hasSuccessor {
                 if paragraph.isInList {
-                    result.append(NSAttributedString(string: "\n"))
+                    result = NSMutableAttributedString(string: "\n")
                 }
                 else {
-                    result.append(NSAttributedString(string: "\n\n"))
+                    result = NSMutableAttributedString(string: "\n\n")
                 }
+            }
+            else {
+                result = NSMutableAttributedString()
             }
             
             stylesheet.applyStyling(paragraph: result)
