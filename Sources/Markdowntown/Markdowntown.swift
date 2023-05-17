@@ -209,10 +209,10 @@ public struct Markdowntown {
             
             if paragraph.hasSuccessor {
                 if paragraph.isInList {
-                    result.append(NSAttributedString(string: "\n"))
+                    result.append(applyTextStyle("\n"))
                 }
                 else {
-                    result.append(NSAttributedString(string: "\n\n"))
+                    result.append(applyTextStyle("\n\n"))
                 }
             }
             
