@@ -203,12 +203,7 @@ public struct Markdowntown {
             let result = joinedVisitedChildren(for: paragraph)
             
             if paragraph.hasSuccessor {
-                if paragraph.isInList {
-                    result.append(applyTextStyle("\n"))
-                }
-                else {
-                    result.append(applyTextStyle("\n\n"))
-                }
+                result.append(applyTextStyle("\n"))
             }
             
             stylesheet.applyStyling(paragraph: result)
