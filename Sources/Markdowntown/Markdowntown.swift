@@ -233,7 +233,8 @@ public struct Markdowntown {
         mutating func visitStrong(_ strong: Strong) -> NSAttributedString {
             guard configuration.useStrong else { return applyTextStyle(strong.format()) }
 
-            let result = joinedVisitedChildren(for: strong)
+            let result = NSMutableAttributedString(string: strong.plainText)
+//            let result = joinedVisitedChildren(for: strong)
             
             if strong.parent is Emphasis, configuration.useEmphasis {
                 stylesheet.applyStyling(strongEmphasis: result)
@@ -248,7 +249,8 @@ public struct Markdowntown {
         mutating func visitEmphasis(_ emphasis: Emphasis) -> NSAttributedString {
             guard configuration.useEmphasis else { return applyTextStyle(emphasis.format()) }
             
-            let result = joinedVisitedChildren(for: emphasis)
+            let result = NSMutableAttributedString(string: emphasis.plainText)
+//            let result = joinedVisitedChildren(for: emphasis)
             
             if emphasis.parent is Strong, configuration.useStrong {
                 stylesheet.applyStyling(strongEmphasis: result)
