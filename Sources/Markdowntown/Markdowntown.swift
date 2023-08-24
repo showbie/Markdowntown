@@ -74,7 +74,7 @@ public struct Markdowntown {
                 result = NSMutableAttributedString(string: "\u{00A0} \u{0009} \u{00A0}")
                 
                 if thematicBreak.hasSuccessor {
-                    result.append(NSAttributedString(string: "\n"))
+                    result.append(NSAttributedString(string: "\n\n"))
                 }
 
                 stylesheet.applyStyling(thematicBreak: result)
@@ -83,7 +83,7 @@ public struct Markdowntown {
                 result = NSMutableAttributedString(string: thematicBreak.format())
                 
                 if thematicBreak.hasSuccessor {
-                    result.append(NSAttributedString(string: "\n"))
+                    result.append(NSAttributedString(string: "\n\n"))
                 }
 
                 stylesheet.applyStyling(text: result)
@@ -99,7 +99,7 @@ public struct Markdowntown {
                 result = NSMutableAttributedString(string: heading.plainText)
                 
                 if heading.hasSuccessor {
-                    result.append(NSAttributedString(string: "\n"))
+                    result.append(NSAttributedString(string: "\n\n"))
                 }
                 
                 stylesheet.applyStyling(heading: result, atLevel: heading.level)
@@ -108,7 +108,7 @@ public struct Markdowntown {
                 result = NSMutableAttributedString(string: heading.format())
                 
                 if heading.hasSuccessor {
-                    result.append(NSAttributedString(string: "\n"))
+                    result.append(NSAttributedString(string: "\n\n"))
                 }
                 
                 stylesheet.applyStyling(text: result)
@@ -142,7 +142,7 @@ public struct Markdowntown {
             }
             
             if listItem.hasSuccessor {
-                result.append(applyTextStyle("\n"))
+                result.append(applyTextStyle("\n\n"))
             }
             
             return result
@@ -201,7 +201,7 @@ public struct Markdowntown {
             let result = joinedVisitedChildren(for: paragraph)
             
             if paragraph.hasSuccessor {
-                result.append(applyTextStyle("\n"))
+                result.append(applyTextStyle("\n\n"))
             }
             
             stylesheet.applyStyling(paragraph: result)
